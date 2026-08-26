@@ -6,13 +6,13 @@
 
 const TRACKS = [
   {
-    title: "Nome da Faixa 1",
-    desc: "Single · 2026",
+    title: "Groov",
+    desc: "Trilha sonora · 2024",
     src: "assets/musicas/musica1.mp3"
   },
   {
-    title: "Nome da Faixa 2",
-    desc: "Ao vivo · 2025",
+    title: "Sambinha",
+    desc: "Trilha sonora · 2025",
     src: "assets/musicas/musica2.mp3"
   },
   {
