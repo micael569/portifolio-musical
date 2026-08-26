@@ -1,8 +1,8 @@
-# 🎵 [Seu Nome] — Portfólio Musical
+# 🎵 Ikel — Portfólio Musical
 
 Bem-vindo(a) ao meu portfólio musical! Este site reúne as músicas que já produzi/compus, com o objetivo de compartilhar meu trabalho e minha trajetória como artista.
 
-🔗 **Acesse o site:** [https://micael569.github.io/portifolio-musical/](https://seuusuario.github.io/nome-do-repo)
+🔗 **Acesse o site:** [Clique aqui](https://micael569.github.io/portifolio-musical)
 
 ## 🎧 Sobre o projeto
 
