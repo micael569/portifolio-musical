@@ -16,8 +16,8 @@ const TRACKS = [
     src: "assets/musicas/musica2.mp3"
   },
   {
-    title: "Nome da Faixa 3",
-    desc: "EP — faixa 1",
+    title: "Boss",
+    desc: "Trilha sonora · 2025",
     src: "assets/musicas/musica3.mp3"
   }
 ];
