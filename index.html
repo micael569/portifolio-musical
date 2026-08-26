@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nome do Artista — Portfólio Musical</title>
+<meta name="description" content="Portfólio musical com faixas de áudio e vídeos.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;700;900&family=Work+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<canvas id="bg-grain"></canvas>
+
+<header class="hero">
+  <div class="hero__eyebrow">Portfólio musical / 2026</div>
+  <h1 class="hero__title">SEU<br>NOME<span class="hero__title-accent">.</span></h1>
+  <p class="hero__tagline">Faixas autorais, sessões ao vivo e trilhas — reunidas em um só lugar.</p>
+  <canvas id="hero-wave" class="hero__wave" height="60"></canvas>
+</header>
+
+<main>
+
+  <section class="section" id="sobre">
+    <div class="section__label"><span>Sobre</span></div>
+    <p class="about__text">
+      Escreva aqui, em duas ou três frases, quem você é como artista: seu gênero,
+      suas influências e o que move o seu trabalho. Esse é o espaço para contar
+      sua história antes de tocar as músicas.
+    </p>
+  </section>
+
+  <section class="section" id="faixas">
+    <div class="section__label"><span>Faixas</span></div>
+
+    <div class="tracklist" id="tracklist">
+      <!-- As faixas são inseridas aqui pelo script.js a partir da lista TRACKS -->
+    </div>
+
+    <div class="player-bar" id="player-bar">
+      <canvas id="wave-canvas" width="600" height="70"></canvas>
+      <div class="player-bar__info">
+        <span id="now-playing">Selecione uma faixa</span>
+        <span id="now-time">0:00 / 0:00</span>
+      </div>
+      <audio id="audio-el" preload="none"></audio>
+    </div>
+  </section>
+
+  <section class="section" id="videos">
+    <div class="section__label"><span>Vídeos</span></div>
+
+    <div class="video-grid" id="video-grid">
+      <!-- Os vídeos são inseridos aqui pelo script.js a partir da lista VIDEOS -->
+    </div>
+  </section>
+
+  <section class="section" id="contato">
+    <div class="section__label"><span>Contato</span></div>
+    <div class="contact">
+      <a href="mailto:seuemail@exemplo.com" class="contact__link">seuemail@exemplo.com</a>
+      <div class="contact__socials">
+        <a href="#" class="contact__social">Instagram</a>
+        <a href="#" class="contact__social">YouTube</a>
+        <a href="#" class="contact__social">Spotify</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <span>© 2026 Seu Nome. Feito com HTML, CSS e JS puros — hospedado no GitHub Pages.</span>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
