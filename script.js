@@ -17,7 +17,7 @@ const TRACKS = [
   },
   {
     title: "Boss",
-    desc: "Trilha sonora · 2025",
+    desc: "Trilha sonora · 2024",
     src: "assets/musicas/musica3.mp3"
   }
 ];
