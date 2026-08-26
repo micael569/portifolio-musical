@@ -29,9 +29,9 @@ portifolio-musical/
 ├── style.css
 ├── script.js
 └── assets/
-    ├── musicas/   ← coloque seus .mp3 aqui
-    ├── videos/    ← coloque seus .mp4 aqui
-    └── capas/     ← (opcional) imagens de capa
+    ├── musicas/
+    ├── videos/
+    └── capas/
 ```
 
 ## 🎹 Músicas em destaque
