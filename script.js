@@ -19,18 +19,53 @@ const TRACKS = [
     title: "Boss",
     desc: "Trilha sonora · 2024",
     src: "assets/musicas/musica3.mp3"
+  },
+  {
+    title: "Exploração Espacial",
+    desc: "Autoral · 2026",
+    src: "assets/musicas/musica4.mp3"
+  },
+  {
+    title: "Por do Sol",
+    desc: "Autoral · 2026",
+    src: "assets/musicas/musica5.mp3"
+  },
+  {
+    title: "Memórias",
+    desc: "Autoral · 2025",
+    src: "assets/musicas/musica6.mp3"
+  },
+  {
+    title: "Menu",
+    desc: "Trilha sonora · 2024",
+    src: "assets/musicas/musica7.mp3"
+  },
+  {
+    title: "Sombrio",
+    desc: "Trilha sonora · 2022",
+    src: "assets/musicas/musica8.mp3"
+  },
+  {
+    title: "Jazz",
+    desc: "Autoral · 2022",
+    src: "assets/musicas/musica9.mp3"
+  },
+  {
+    title: "Mistério",
+    desc: "Trilha sonora · 2023",
+    src: "assets/musicas/musica10.mp3"
   }
 ];
 
 const VIDEOS = [
   {
-    title: "Nome do Vídeo 1",
-    desc: "Sessão ao vivo · 2026",
+    title: "Pinguim (+18)",
+    desc: "Remix · 2023",
     src: "assets/videos/video1.mp4"
   },
   {
-    title: "Nome do Vídeo 2",
-    desc: "Clipe oficial",
+    title: "Rock",
+    desc: "Autoral · 2023",
     src: "assets/videos/video2.mp4"
   }
 ];
