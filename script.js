@@ -5,15 +5,15 @@
    ============================================================ */
 
 const TRACKS = [
+    {
+    title: "Sambinha",
+    desc: "Trilha sonora · 2025",
+    src: "assets/musicas/musica2.mp3"
+  },
   {
     title: "Groov",
     desc: "Trilha sonora · 2024",
     src: "assets/musicas/musica1.mp3"
-  },
-  {
-    title: "Sambinha",
-    desc: "Trilha sonora · 2025",
-    src: "assets/musicas/musica2.mp3"
   },
   {
     title: "Boss",
@@ -54,6 +54,11 @@ const TRACKS = [
     title: "Mistério",
     desc: "Trilha sonora · 2023",
     src: "assets/musicas/musica10.mp3"
+  },
+  {
+    title: "Palhacinho :)",
+    desc: "Rascunho · 2026",
+    src: "assets/musicas/musica11.mp3"
   }
 ];
 
