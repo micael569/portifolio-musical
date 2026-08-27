@@ -38,9 +38,9 @@ portifolio-musical/
 
 | Faixa | Ano | Link |
 |-------|-----|------|
-| Exploração Espacial| 2024 | [Ouvir](#) |
+| Exploração Espacial| 2026 | [Ouvir](#) |
 | Sambinha | 2025 | [Ouvir](#) |
-| Pôr do Sol | 2024 | [Ouvir](#) |
+| Pôr do Sol | 2026 | [Ouvir](#) |
 
 ## 📬 Contato
 
