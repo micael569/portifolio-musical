@@ -38,19 +38,15 @@ portifolio-musical/
 
 | Faixa | Ano | Link |
 |-------|-----|------|
-| Groov | 2024 | [Ouvir](#) |
+| Exploração Espacial| 2024 | [Ouvir](#) |
 | Sambinha | 2025 | [Ouvir](#) |
-| Boss | 2024 | [Ouvir](#) |
+| Pôr do Sol | 2024 | [Ouvir](#) |
 
 ## 📬 Contato
 
 - Instagram: [@seuusuario](#)
 - E-mail: ikel.producer@gmail.com
 - Spotify: [Meu perfil](#)
-
-## 📄 Licença
-
-Este projeto está sob a licença MIT — sinta-se à vontade para usá-lo como referência para o seu próprio portfólio.
 
 ---
 
