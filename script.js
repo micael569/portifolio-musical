@@ -203,15 +203,52 @@ let audioCtx, analyser, sourceNode, dataArray;
 const waveCanvas = document.getElementById("wave-canvas");
 const waveCtx = waveCanvas.getContext("2d");
 
+// Número de barras exibidas e faixa de frequência considerada (em Hz).
+// Graves e médios ficam sub-representados numa escala linear porque
+// ocupam poucos "bins" da FFT — por isso agrupamos por oitava (log),
+// do jeito que o ouvido percebe o espectro.
+const VISUAL_BARS = 48;
+const FREQ_MIN = 30;    // grave mais baixo audível relevante
+const FREQ_MAX = 14000; // agudo mais alto relevante (acima disso é quase só chiado)
+
+let barBinRanges = null; // calculado depois que sabemos o sampleRate
+
 function initAudioGraph() {
   if (audioCtx) return;
   audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   analyser = audioCtx.createAnalyser();
-  analyser.fftSize = 256;
+  analyser.fftSize = 2048;              // mais resolução para separar graves de médios
+  analyser.smoothingTimeConstant = 0.75; // suaviza sem deixar "travado"
+  analyser.minDecibels = -85;            // mais sensível a sons baixos
+  analyser.maxDecibels = -10;
   dataArray = new Uint8Array(analyser.frequencyBinCount);
   sourceNode = audioCtx.createMediaElementSource(audioEl);
   sourceNode.connect(analyser);
   analyser.connect(audioCtx.destination);
+
+  barBinRanges = computeLogBarRanges(audioCtx.sampleRate, analyser.frequencyBinCount);
+}
+
+// Calcula, para cada barra visual, qual faixa de bins da FFT ela deve
+// resumir — usando espaçamento logarítmico (igual espaço por oitava).
+function computeLogBarRanges(sampleRate, binCount) {
+  const nyquist = sampleRate / 2;
+  const logMin = Math.log10(FREQ_MIN);
+  const logMax = Math.log10(Math.min(FREQ_MAX, nyquist));
+  const ranges = [];
+
+  const freqToBin = (f) => Math.min(binCount - 1, Math.round((f / nyquist) * binCount));
+
+  for (let i = 0; i < VISUAL_BARS; i++) {
+    const t0 = i / VISUAL_BARS;
+    const t1 = (i + 1) / VISUAL_BARS;
+    const f0 = Math.pow(10, logMin + t0 * (logMax - logMin));
+    const f1 = Math.pow(10, logMin + t1 * (logMax - logMin));
+    const bin0 = freqToBin(f0);
+    const bin1 = Math.max(bin0 + 1, freqToBin(f1));
+    ranges.push([bin0, bin1]);
+  }
+  return ranges;
 }
 
 function startVisualizer() {
@@ -222,21 +259,24 @@ function startVisualizer() {
 
 function drawWave() {
   requestAnimationFrame(drawWave);
-  if (!analyser) return;
+  if (!analyser || !barBinRanges) return;
 
   analyser.getByteFrequencyData(dataArray);
   const w = waveCanvas.width;
   const h = waveCanvas.height;
   waveCtx.clearRect(0, 0, w, h);
 
-  const barCount = dataArray.length;
-  const barWidth = w / barCount;
+  const barWidth = w / VISUAL_BARS;
+  const color = audioEl.paused ? "rgba(233,226,208,0.15)" : "rgb(227, 162, 59)";
+  waveCtx.fillStyle = color;
 
-  for (let i = 0; i < barCount; i++) {
-    const value = dataArray[i] / 255;
+  for (let i = 0; i < VISUAL_BARS; i++) {
+    const [bin0, bin1] = barBinRanges[i];
+    let sum = 0;
+    for (let b = bin0; b < bin1; b++) sum += dataArray[b];
+    const avg = sum / (bin1 - bin0);
+    const value = avg / 255;
     const barHeight = value * h;
-    const hue = audioEl.paused ? "rgba(233,226,208,0.15)" : "rgb(227, 162, 59)";
-    waveCtx.fillStyle = hue;
     waveCtx.fillRect(i * barWidth, h - barHeight, barWidth - 1, barHeight);
   }
 }
