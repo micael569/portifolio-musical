@@ -5,74 +5,22 @@
    ============================================================ */
 
 const TRACKS = [
-    {
-    title: "Sambinha",
-    desc: "Trilha sonora · 2025",
-    src: "assets/musicas/musica2.mp3"
-  },
-  {
-    title: "Groov",
-    desc: "Trilha sonora · 2024",
-    src: "assets/musicas/musica1.mp3"
-  },
-  {
-    title: "Boss",
-    desc: "Trilha sonora · 2024",
-    src: "assets/musicas/musica3.mp3"
-  },
-  {
-    title: "Exploração Espacial",
-    desc: "Autoral · 2026",
-    src: "assets/musicas/musica4.mp3"
-  },
-  {
-    title: "Por do Sol",
-    desc: "Autoral · 2026",
-    src: "assets/musicas/musica5.mp3"
-  },
-  {
-    title: "Memórias",
-    desc: "Autoral · 2025",
-    src: "assets/musicas/musica6.mp3"
-  },
-  {
-    title: "Menu",
-    desc: "Trilha sonora · 2024",
-    src: "assets/musicas/musica7.mp3"
-  },
-  {
-    title: "Sombrio",
-    desc: "Trilha sonora · 2022",
-    src: "assets/musicas/musica8.mp3"
-  },
-  {
-    title: "Jazz",
-    desc: "Autoral · 2022",
-    src: "assets/musicas/musica9.mp3"
-  },
-  {
-    title: "Mistério",
-    desc: "Trilha sonora · 2023",
-    src: "assets/musicas/musica10.mp3"
-  },
-  {
-    title: "Palhacinho :)",
-    desc: "Rascunho · 2026",
-    src: "assets/musicas/musica11.mp3"
-  }
+  { title: "Sambinha", desc: "Trilha sonora · 2025", src: "assets/musicas/musica2.mp3" },
+  { title: "Groov", desc: "Trilha sonora · 2024", src: "assets/musicas/musica1.mp3" },
+  { title: "Boss", desc: "Trilha sonora · 2024", src: "assets/musicas/musica3.mp3" },
+  { title: "Exploração Espacial", desc: "Autoral · 2026", src: "assets/musicas/musica4.mp3" },
+  { title: "Por do Sol", desc: "Autoral · 2026", src: "assets/musicas/musica5.mp3" },
+  { title: "Memórias", desc: "Autoral · 2025", src: "assets/musicas/musica6.mp3" },
+  { title: "Menu", desc: "Trilha sonora · 2024", src: "assets/musicas/musica7.mp3" },
+  { title: "Sombrio", desc: "Trilha sonora · 2022", src: "assets/musicas/musica8.mp3" },
+  { title: "Jazz", desc: "Autoral · 2022", src: "assets/musicas/musica9.mp3" },
+  { title: "Mistério", desc: "Trilha sonora · 2023", src: "assets/musicas/musica10.mp3" },
+  { title: "Palhacinho :)", desc: "Rascunho · 2026", src: "assets/musicas/musica11.mp3" }
 ];
 
 const VIDEOS = [
-  {
-    title: "Pinguim (+18)",
-    desc: "Remix · 2023",
-    src: "assets/videos/video1.mp4"
-  },
-  {
-    title: "Rock",
-    desc: "Autoral · 2023",
-    src: "assets/videos/video2.mp4"
-  }
+  { title: "Pinguim (+18)", desc: "Remix · 2023", src: "assets/videos/video1.mp4" },
+  { title: "Rock", desc: "Autoral · 2023", src: "assets/videos/video2.mp4" }
 ];
 
 /* ============================================================
@@ -91,6 +39,8 @@ function formatTime(sec) {
   const s = Math.floor(sec % 60).toString().padStart(2, "0");
   return `${m}:${s}`;
 }
+
+const trackRows = [];
 
 TRACKS.forEach((track, i) => {
   const row = document.createElement("div");
@@ -116,24 +66,43 @@ TRACKS.forEach((track, i) => {
   });
 
   tracklistEl.appendChild(row);
-
-  // Carrega a duração sem tocar, só para exibir na lista
-  const probe = new Audio();
-  probe.preload = "metadata";
-  probe.src = track.src;
-  probe.addEventListener("loadedmetadata", () => {
-    const durEl = row.querySelector("[data-duration]");
-    durEl.textContent = formatTime(probe.duration);
-  });
-  probe.addEventListener("error", () => {
-    const durEl = row.querySelector("[data-duration]");
-    durEl.textContent = "—";
-  });
+  trackRows.push(row);
 });
 
-function toggleTrack(i) {
-  const rows = tracklistEl.querySelectorAll(".track");
+// Carrega as durações aos poucos (poucas por vez), em vez de disparar
+// todas as requisições de uma vez quando a página abre — evita picos de
+// rede/CPU logo no carregamento, principalmente no celular.
+function loadDurationsStaggered(rows, concurrency = 3) {
+  let nextIndex = 0;
 
+  function loadNext() {
+    if (nextIndex >= TRACKS.length) return;
+    const i = nextIndex++;
+    const track = TRACKS[i];
+    const row = rows[i];
+
+    const probe = new Audio();
+    probe.preload = "metadata";
+    probe.src = track.src;
+
+    const finish = () => loadNext();
+
+    probe.addEventListener("loadedmetadata", () => {
+      row.querySelector("[data-duration]").textContent = formatTime(probe.duration);
+      finish();
+    });
+    probe.addEventListener("error", () => {
+      row.querySelector("[data-duration]").textContent = "—";
+      finish();
+    });
+  }
+
+  for (let c = 0; c < concurrency; c++) loadNext();
+}
+
+loadDurationsStaggered(trackRows);
+
+function toggleTrack(i) {
   if (currentIndex === i && !audioEl.paused) {
     audioEl.pause();
     return;
@@ -167,7 +136,7 @@ function updatePlayingUI() {
   rows.forEach((row, i) => {
     const btn = row.querySelector(".track__play");
     const playing = i === currentIndex && !audioEl.paused;
-    row.classList.toggle("is-playing", i === currentIndex && !audioEl.paused);
+    row.classList.toggle("is-playing", playing);
     btn.textContent = playing ? "❚❚" : "▶";
   });
   nowPlayingEl.textContent = currentIndex === null
@@ -204,62 +173,91 @@ const waveCanvas = document.getElementById("wave-canvas");
 const waveCtx = waveCanvas.getContext("2d");
 
 // Número de barras exibidas e faixa de frequência considerada (em Hz).
-// Graves e médios ficam sub-representados numa escala linear porque
-// ocupam poucos "bins" da FFT — por isso agrupamos por oitava (log),
-// do jeito que o ouvido percebe o espectro.
+// Dividimos o espectro em 3 regiões (grave / médio / agudo) com largura
+// visual fixa, e dentro de cada região usamos escala logarítmica — assim
+// nenhuma faixa domina o gráfico só por ter mais "bins" de FFT.
 const VISUAL_BARS = 48;
-const FREQ_MIN = 30;    // grave mais baixo audível relevante
-const FREQ_MAX = 14000; // agudo mais alto relevante (acima disso é quase só chiado)
+const FREQ_MIN = 30;
+const FREQ_MAX = 14000;
+const BASS_END = 250;
+const MID_END = 4000;
 
-let barBinRanges = null; // calculado depois que sabemos o sampleRate
+const REGION_WIDTHS = {
+  bass: 0.28,
+  mid: 0.44,
+  treble: 0.28
+};
+
+let barBinRanges = null;
 
 function initAudioGraph() {
   if (audioCtx) return;
   audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   analyser = audioCtx.createAnalyser();
-  analyser.fftSize = 2048;              // mais resolução para separar graves de médios
-  analyser.smoothingTimeConstant = 0.75; // suaviza sem deixar "travado"
-  analyser.minDecibels = -85;            // mais sensível a sons baixos
+  analyser.fftSize = 2048;
+  analyser.smoothingTimeConstant = 0.75;
+  analyser.minDecibels = -85;
   analyser.maxDecibels = -10;
   dataArray = new Uint8Array(analyser.frequencyBinCount);
   sourceNode = audioCtx.createMediaElementSource(audioEl);
   sourceNode.connect(analyser);
   analyser.connect(audioCtx.destination);
 
-  barBinRanges = computeLogBarRanges(audioCtx.sampleRate, analyser.frequencyBinCount);
+  barBinRanges = computeBandBarRanges(audioCtx.sampleRate, analyser.frequencyBinCount);
 }
 
-// Calcula, para cada barra visual, qual faixa de bins da FFT ela deve
-// resumir — usando espaçamento logarítmico (igual espaço por oitava).
-function computeLogBarRanges(sampleRate, binCount) {
+function computeBandBarRanges(sampleRate, binCount) {
   const nyquist = sampleRate / 2;
-  const logMin = Math.log10(FREQ_MIN);
-  const logMax = Math.log10(Math.min(FREQ_MAX, nyquist));
-  const ranges = [];
+  const maxFreq = Math.min(FREQ_MAX, nyquist);
 
-  const freqToBin = (f) => Math.min(binCount - 1, Math.round((f / nyquist) * binCount));
+  const freqToBin = (f) =>
+    Math.min(binCount - 1, Math.max(0, Math.round((f / nyquist) * binCount)));
 
-  for (let i = 0; i < VISUAL_BARS; i++) {
-    const t0 = i / VISUAL_BARS;
-    const t1 = (i + 1) / VISUAL_BARS;
-    const f0 = Math.pow(10, logMin + t0 * (logMax - logMin));
-    const f1 = Math.pow(10, logMin + t1 * (logMax - logMin));
-    const bin0 = freqToBin(f0);
-    const bin1 = Math.max(bin0 + 1, freqToBin(f1));
-    ranges.push([bin0, bin1]);
+  function createLogRanges(freqStart, freqEnd, barCount) {
+    const ranges = [];
+    const logStart = Math.log10(freqStart);
+    const logEnd = Math.log10(freqEnd);
+
+    for (let i = 0; i < barCount; i++) {
+      const t0 = i / barCount;
+      const t1 = (i + 1) / barCount;
+      const f0 = Math.pow(10, logStart + t0 * (logEnd - logStart));
+      const f1 = Math.pow(10, logStart + t1 * (logEnd - logStart));
+      const bin0 = freqToBin(f0);
+      const bin1 = Math.max(bin0 + 1, freqToBin(f1));
+      ranges.push([bin0, bin1]);
+    }
+    return ranges;
   }
-  return ranges;
+
+  const bassBars = Math.round(VISUAL_BARS * REGION_WIDTHS.bass);
+  const midBars = Math.round(VISUAL_BARS * REGION_WIDTHS.mid);
+  const trebleBars = VISUAL_BARS - bassBars - midBars;
+
+  return [
+    ...createLogRanges(FREQ_MIN, BASS_END, bassBars),
+    ...createLogRanges(BASS_END, MID_END, midBars),
+    ...createLogRanges(MID_END, maxFreq, trebleBars)
+  ];
 }
+
+// ---- CORREÇÃO PRINCIPAL: só existe UM loop de animação por vez ----
+let waveLoopActive = false;
 
 function startVisualizer() {
   initAudioGraph();
   if (audioCtx.state === "suspended") audioCtx.resume();
-  drawWave();
+  if (!waveLoopActive) {
+    waveLoopActive = true;
+    drawWave();
+  }
 }
 
 function drawWave() {
-  requestAnimationFrame(drawWave);
-  if (!analyser || !barBinRanges) return;
+  if (!analyser || !barBinRanges) {
+    waveLoopActive = false;
+    return;
+  }
 
   analyser.getByteFrequencyData(dataArray);
   const w = waveCanvas.width;
@@ -272,16 +270,27 @@ function drawWave() {
 
   for (let i = 0; i < VISUAL_BARS; i++) {
     const [bin0, bin1] = barBinRanges[i];
-    let sum = 0;
-    for (let b = bin0; b < bin1; b++) sum += dataArray[b];
-    const avg = sum / (bin1 - bin0);
-    const value = avg / 255;
-    const barHeight = value * h;
+    let energy = 0;
+    for (let b = bin0; b < bin1; b++) {
+      const v = dataArray[b] / 255;
+      energy += v * v;
+    }
+    const rms = Math.sqrt(energy / (bin1 - bin0));
+    const barHeight = rms * h;
     waveCtx.fillRect(i * barWidth, h - barHeight, barWidth - 1, barHeight);
   }
+
+  // Se a música parou (pause, fim da faixa, ou troca de faixa), este é o
+  // último frame desenhado — o loop encerra aqui em vez de continuar para
+  // sempre em segundo plano.
+  if (audioEl.paused || audioEl.ended) {
+    waveLoopActive = false;
+    return;
+  }
+
+  requestAnimationFrame(drawWave);
 }
 
-/* Ajusta a resolução real do canvas ao tamanho exibido */
 function resizeCanvas(canvas) {
   const rect = canvas.getBoundingClientRect();
   canvas.width = rect.width * devicePixelRatio;
@@ -296,6 +305,7 @@ resizeCanvas(waveCanvas);
 const heroWave = document.getElementById("hero-wave");
 const heroCtx = heroWave.getContext("2d");
 let heroT = 0;
+let heroLoopActive = false;
 
 function resizeHero() {
   const rect = heroWave.getBoundingClientRect();
@@ -306,7 +316,6 @@ resizeHero();
 window.addEventListener("resize", resizeHero);
 
 function drawHeroWave() {
-  requestAnimationFrame(drawHeroWave);
   const w = heroWave.width;
   const h = heroWave.height;
   heroCtx.clearRect(0, 0, w, h);
@@ -321,7 +330,29 @@ function drawHeroWave() {
   }
   heroCtx.stroke();
   heroT += 0.02;
+
+  if (document.hidden) {
+    heroLoopActive = false;
+    return;
+  }
+  requestAnimationFrame(drawHeroWave);
 }
 
+function startHeroWave() {
+  if (!heroLoopActive) {
+    heroLoopActive = true;
+    drawHeroWave();
+  }
+}
+
+// Pausa as animações quando a aba está em segundo plano (economiza
+// bateria/CPU no celular) e retoma quando volta a ficar visível.
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) {
+    startHeroWave();
+    if (!audioEl.paused) startVisualizer();
+  }
+});
+
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-if (!reduceMotion) drawHeroWave();
+if (!reduceMotion) startHeroWave();
