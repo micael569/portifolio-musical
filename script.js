@@ -14,8 +14,7 @@ const TRACKS = [
   { title: "Menu", desc: "Trilha sonora · 2024", src: "assets/musicas/musica7.mp3" },
   { title: "Sombrio", desc: "Trilha sonora · 2022", src: "assets/musicas/musica8.mp3" },
   { title: "Jazz", desc: "Autoral · 2022", src: "assets/musicas/musica9.mp3" },
-  { title: "Mistério", desc: "Trilha sonora · 2023", src: "assets/musicas/musica10.mp3" },
-  { title: "Palhacinho :)", desc: "Rascunho · 2026", src: "assets/musicas/musica11.mp3" }
+  { title: "Mistério", desc: "Trilha sonora · 2023", src: "assets/musicas/musica10.mp3" }
 ];
 
 const VIDEOS = [
